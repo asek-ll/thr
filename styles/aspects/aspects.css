@@ -1,0 +1,371 @@
+.aspect-icon {
+    background-image: url(aspects.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.aspect-icon-aer {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -5px;
+}
+
+.aspect-icon-alienis {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -5px;
+}
+
+.aspect-icon-aqua {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -5px;
+}
+
+.aspect-icon-arbor {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -5px;
+}
+
+.aspect-icon-auram {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -5px;
+}
+
+.aspect-icon-bestia {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -5px;
+}
+
+.aspect-icon-cognitio {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -5px;
+}
+
+.aspect-icon-corpus {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -47px;
+}
+
+.aspect-icon-desidia {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -47px;
+}
+
+.aspect-icon-electrum {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -47px;
+}
+
+.aspect-icon-exanimis {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -47px;
+}
+
+.aspect-icon-fabrico {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -47px;
+}
+
+.aspect-icon-fames {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -47px;
+}
+
+.aspect-icon-gelum {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -47px;
+}
+
+.aspect-icon-gula {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -89px;
+}
+
+.aspect-icon-herba {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -89px;
+}
+
+.aspect-icon-humanus {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -89px;
+}
+
+.aspect-icon-ignis {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -89px;
+}
+
+.aspect-icon-infernus {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -89px;
+}
+
+.aspect-icon-instrumentum {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -89px;
+}
+
+.aspect-icon-invidia {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -89px;
+}
+
+.aspect-icon-ira {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -131px;
+}
+
+.aspect-icon-iter {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -131px;
+}
+
+.aspect-icon-limus {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -131px;
+}
+
+.aspect-icon-lucrum {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -131px;
+}
+
+.aspect-icon-lux {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -131px;
+}
+
+.aspect-icon-luxuria {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -131px;
+}
+
+.aspect-icon-machina {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -131px;
+}
+
+.aspect-icon-magneto {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -173px;
+}
+
+.aspect-icon-messis {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -173px;
+}
+
+.aspect-icon-metallum {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -173px;
+}
+
+.aspect-icon-meto {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -173px;
+}
+
+.aspect-icon-mortuus {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -173px;
+}
+
+.aspect-icon-motus {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -173px;
+}
+
+.aspect-icon-nebrisum {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -173px;
+}
+
+.aspect-icon-ordo {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -215px;
+}
+
+.aspect-icon-pannus {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -215px;
+}
+
+.aspect-icon-perditio {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -215px;
+}
+
+.aspect-icon-perfodio {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -215px;
+}
+
+.aspect-icon-permutatio {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -215px;
+}
+
+.aspect-icon-potentia {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -215px;
+}
+
+.aspect-icon-praecantatio {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -215px;
+}
+
+.aspect-icon-radio {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -257px;
+}
+
+.aspect-icon-sano {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -257px;
+}
+
+.aspect-icon-sensus {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -257px;
+}
+
+.aspect-icon-spiritus {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -257px;
+}
+
+.aspect-icon-stronito {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -257px;
+}
+
+.aspect-icon-superbia {
+    width: 32px;
+    height: 32px;
+    background-position: -215px -257px;
+}
+
+.aspect-icon-telum {
+    width: 32px;
+    height: 32px;
+    background-position: -257px -257px;
+}
+
+.aspect-icon-tempestas {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -5px;
+}
+
+.aspect-icon-tempus {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -47px;
+}
+
+.aspect-icon-tenebrae {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -89px;
+}
+
+.aspect-icon-terra {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -131px;
+}
+
+.aspect-icon-tutamen {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -173px;
+}
+
+.aspect-icon-vacuos {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -215px;
+}
+
+.aspect-icon-venenum {
+    width: 32px;
+    height: 32px;
+    background-position: -299px -257px;
+}
+
+.aspect-icon-victus {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -299px;
+}
+
+.aspect-icon-vinculum {
+    width: 32px;
+    height: 32px;
+    background-position: -47px -299px;
+}
+
+.aspect-icon-vitium {
+    width: 32px;
+    height: 32px;
+    background-position: -89px -299px;
+}
+
+.aspect-icon-vitreus {
+    width: 32px;
+    height: 32px;
+    background-position: -131px -299px;
+}
+
+.aspect-icon-volatus {
+    width: 32px;
+    height: 32px;
+    background-position: -173px -299px;
+}

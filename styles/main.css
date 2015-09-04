@@ -1,0 +1,35 @@
+.aspects {
+  width: 400px;
+  height: 300px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.field-icons {
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+}
+
+.field-container {
+  position: relative;
+}
+
+.cell .tooltip {
+  display: none;
+  position:absolute;
+  left: 40px;
+  top: 40px;
+  height: 100px;
+  width: 100px;
+  background: #000;
+  color: #fff;
+}
+
+.cell.hovered .tooltip {
+  display: block;
+}
+
