@@ -14,7 +14,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     height: 480
   });
 
-  var FIELD_SIZE = 2;
+  var FIELD_SIZE = 3;
 
   var basePoint = new fabric.Point(200, 200);
   var hexProps = {
@@ -120,7 +120,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       this.$el.addClass('cell').css({
         position: 'absolute',
         top: path.top + 4,
-        left: path.left + 6,
+        left: path.left + 5,
         height: 32,
         width: 32,
       }).appendTo('.field-icons');
@@ -154,7 +154,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
 
       canvas.renderAll();
 
-      this.$el.find('.tooltip').text(this.model.get('text'));
+      this.$el.find('.tooltip').html(this.model.get('text'));
     },
   });
 
@@ -265,8 +265,14 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       var view = this.getViewFromEvent(e);
       if (view) {
         //view.model.set('enabled', !view.model.get('enabled'));
-        var aspectModel = aspects.models[_.random(0, aspects.length - 1)];
-        view.model.set('aspect', aspectModel.get('type'));
+        var type;
+        if ( window.aspectType ) {
+          type = window.aspectType;
+        } else {
+          var aspectModel = aspects.models[_.random(0, aspects.length - 1)];
+          type = aspectModel.get('type');
+        }
+        view.model.set('aspect', type);
       }
     }
   });
@@ -284,6 +290,12 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     initialize: function () {
       this.$el.addClass('aspect-icon aspect-icon-' + this.model.get('type'));
       //this.$el.html(this.model.get('name'));
+    },
+    events: {
+      "click": "chooseAspect"
+    },
+    chooseAspect: function () {
+      window.aspectType = this.model.get('type');
     }
   });
 
@@ -355,7 +367,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     });
   });
 
-  console.log(neighborsMap);
+  //console.log(neighborsMap);
 
   var MAX_PATH_SIZE = 99999;
 
@@ -380,6 +392,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     var changedCells = [cell.cid];
 
     while (changedCells.length > 0) {
+      //console.log('changed', changedCells);
       var processingCells = changedCells;
       changedCells = [];
 
@@ -392,31 +405,34 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
               var nextPath = path + weights[type];
               if (nextPath <= MAX_PATH_SIZE) {
                 //console.log('try ', type1, 'and ', type, weights[type]);
-                if (!nextPathMap[type] || nextPathMap[type] < nextPath) {
+                if (!nextPathMap[type] || nextPathMap[type] > nextPath) {
                   nextPathMap[type] = nextPath;
                 }
               }
             });
         });
 
-        console.log('next path map', nextPathMap);
+        //console.log(cid, 'next path map', nextPathMap);
 
         var neighbors = neighborsMap[cid];
 
         _.each(neighbors, function (cid) {
+          if ( cid === cell.cid ) {
+            return;
+          }
           var currentPathMap = pathMap[cid];
           var newPathMap = {};
           var isChanged = false;
           _.each(currentPathMap, function (path, type) {
             var nextPathVariant = nextPathMap[type] || MAX_PATH_SIZE;
-            if (nextPathVariant < path) {
+            newPathMap[type] = newPathMap[type] || path;
+            if (nextPathVariant < newPathMap[type]) {
               newPathMap[type] = nextPathVariant;
+              //console.log(cid, 'update', type, 'to', nextPathVariant);
               isChanged = true;
-            } else {
-              newPathMap[type] = path;
             }
           });
-          if (isChanged) {
+          if (isChanged && !_.contains(changedCells, cid)) {
             changedCells.push(cid);
           }
           pathMap[cid] = newPathMap;
@@ -440,25 +456,83 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     var m1 = maps[0];
     var m2 = maps[1];
 
-    var summ = {};
+    var sum = {};
 
-    _.each(m1, function (submap, cid) {
-      var submap2 = m2[cid];
-      var submapSum = {};
-      _.each(submap, function (path, type) {
-        submapSum[type] = path + submap2[type];
+    _.each(maps, function (submap) {
+      _.each(submap, function (submap2, cid) {
+        var sumSubMap = sum[cid] || {};
+        _.each(submap2, function (path, type) {
+          sumSubMap[type] = path + (sumSubMap[type] || 0);
+        });
+        sum[cid] = sumSubMap;
       });
-      summ[cid] = submapSum;
     });
 
-    //var dist = summ[filledCells[1].cid][filledCells[0].get('aspect')];
-    //var dist2 = summ[filledCells[0].cid][filledCells[1].get('aspect')];
-    //console.log('DISTS', dist, dist2);
+    var solve = {};
+    _.each(filledCells, function (cell) {
+      solve[cell.cid] = cell.get('aspect');
+    });
 
-    summ = m1;
+    var flatMapUniq = function (arr) {
+      return _.uniq(_.union.apply(_, arr));
+    };
+
+    var findToSolve = function() {
+      return flatMapUniq(_.map(solve, function (aspect, cid) {
+        var neighbors = neighborsMap[cid];
+        return _.filter(neighbors, function (cid) {
+          return !solve[cid];
+        });
+      }));
+    };
+
+    var toSolve = findToSolve();
+    while(toSolve.length >0) {
+
+    _.each(toSolve, function (cid) {
+      var neighbors = neighborsMap[cid];
+      var accepted = flatMapUniq(_.chain(neighbors).filter(function (cid) {
+        return !!solve[cid];
+      }).map(function (cid) {
+        return aspectRelationMap[solve[cid]];
+      }).value());
+
+      var sums = sum[cid];
+      var min = 'aer';
+      var minPath = MAX_PATH_SIZE;
+      _.each(sums, function (path, type) {
+        if ( path < minPath && _.contains(accepted, type )) {
+          min = type;
+          minPath = path;
+        }
+      });
+
+      solve[cid] = min;
+    });
+
+    toSolve = findToSolve();
+    }
+
+    //_.each(m1, function (submap, cid) {
+      //var submap2 = m2[cid];
+      //var submapSum = {};
+      //_.each(submap, function (path, type) {
+        //submapSum[type] = path + submap2[type];
+      //});
+      //summ[cid] = submapSum;
+    //});
+
+    //console.log(m2.c61.ordo);
+    //console.log(m1.c103.sensus);
+    var dist = sum[filledCells[0].cid][filledCells[0].get('aspect')] - weights[filledCells[0].get('aspect')];
+    var dist2 = sum[filledCells[1].cid][filledCells[1].get('aspect')]- weights[filledCells[1].get('aspect')];
+    console.log('DISTS', dist, dist2);
+
+    //summ = m1;
+    //summ = m2;
 
     var globalMin = MAX_PATH_SIZE;
-    _.each(summ, function (submap, cid) {
+    _.each(sum, function (submap, cid) {
       _.each(submap, function (path, type) {
         if (path < globalMin) {
           globalMin = path;
@@ -466,23 +540,34 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       });
     });
     console.log('MIN: ',globalMin);
-    _.each(summ, function (submap, cid) {
+    _.each(sum, function (submap, cid) {
       var min = 'aer';
       _.each(submap, function (path, type) {
         if (path < submap[min]) {
           min = type;
         }
       });
-      console.log(cid, min, submap[min]);
       //if (globalMin === submap[min]) {
-      //if (dist === submap[min] || dist2 === submap[min]) {
+      //if (dist === submap[min] - weights[min]) {
         //console.log(cid, submap);
         cells.get(cid).set('aspect', min);
-        cells.get(cid).set('text', cid);
+        var info = _.map(submap, function (path, type) {
+          return type + ': ' + path;
+        }).join('</br>');
+        cells.get(cid).set('text', "aspect: " + min + ", summ: " + submap[min] + ", cid: " + cid +' info:<br/>' + info );
+        if ( cid === 'c50' ) {
+          console.log(submap);
+        }
       //}
     });
 
+  _.each(solve, function (type, cid) {
+    cells.get(cid).set('aspect', type);
+  });
 
   });
+
+  //cells.get('c103').set('aspect', 'sensus');
+  //cells.get('c61').set('aspect', 'ordo');
 
 });
