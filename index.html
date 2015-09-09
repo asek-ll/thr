@@ -2,17 +2,37 @@
 <html>
   <head>
     <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="styles/main.css">
     <link rel="stylesheet" type="text/css" href="styles/aspects/aspects.css">
   </head>
   <body>
-    <div class="field-container">
-      <div class="field-icons"></div>
-      <canvas id="field" ></canvas>
-      <div class="field-tooltips"></div>
+    <div class="container">
+      <h1>T R H</h1>
+      <form class="config-form form-horizontal">
+        <div class="form-group">
+          <label for="exampleInputEmail1" class="col-sm-2 control-label">Field radius</label>
+          <div class="col-sm-1">
+            <select class="form-control">
+              <option>3</option>
+              <option>4</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="field-container">
+            <div class="field-icons"></div>
+            <canvas id="field" ></canvas>
+            <div class="field-tooltips"></div>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="aspects"></div>
+        </div>
+      </div>
+      <button id="calc-btn">calc</button>
     </div>
-    <div class="aspects">
-    </div>
-    <button id="calc-btn">calc</button>
   </body>
 </html>

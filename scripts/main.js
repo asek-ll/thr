@@ -14,7 +14,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     height: 480
   });
 
-  var FIELD_SIZE = 3;
+  var FIELD_SIZE = 4;
 
   var basePoint = new fabric.Point(200, 200);
   var hexProps = {
@@ -61,10 +61,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       var z = this.get('z');
 
       var results = [];
-
-      //1 0 0 == 0 -1 -1
-      //0 1 0 == -1 0 -1
-      //0 0 1 == -1 -1 0
 
       results.push([x - 1, y, z]);
 
@@ -164,6 +160,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     },
     initialize: function () {
       var cells = this.get('cells');
+      var FIELD_SIZE = this.get('fieldRadius');
       cells.add(
         new Cell({
           x: 0,
@@ -198,7 +195,40 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       return this.get('cells').find(function (cell) {
         return cell.get('x') === x && cell.get('y') == y && cell.get('z') == z;
       });
+    },
+    getNearestCoords: function (cell) {
+      var x = cell.get('x');
+      var y = cell.get('y');
+      var z = cell.get('z');
+      var fieldRadius = this.get('fieldRadius');
+
+      var results = [];
+
+      results.push([x - 1, y, z]);
+      results.push([x + 1, y, z]);
+      results.push([x, y - 1, z]);
+      results.push([x, y + 1, z]);
+      results.push([x, y, z - 1]);
+      results.push([x, y, z + 1]);
+
+      results = _.chain(results).map(function (pos) {
+        if (pos[0] < 0 || pos[1] < 0 || pos[2] < 0) {
+          pos[0] += 1;
+          pos[1] += 1;
+          pos[2] += 1;
+        } else if (pos[0] > 0 && pos[1] > 0 && pos[2] > 0) {
+          pos[0] -= 1;
+          pos[1] -= 1;
+          pos[2] -= 1;
+        }
+        return pos;
+      }).filter(function (pos) {
+        return pos[0] <= fieldRadius && pos[1] <= fieldRadius && pos[2] <= fieldRadius;
+      }).value();
+
+      return results;
     }
+
   });
 
   var FieldView = Backbone.View.extend({
@@ -228,20 +258,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       var view = this.getViewFromEvent(e);
       if (view) {
         view.model.set('isHovered', true);
-
-        //_.each(view.model.get('neighbors'), function (neighbor) {
-        //neighbor.set('isHovered', true);
-        //});
-
-        //_.each(view.model.getNearestCoords(), function (coords) {
-        //console.log(coords);
-        //var cell = _this.model.getCellWithCoord(coords[0], coords[1], coords[2]);
-        //if (cell) {
-        //cell.set('isHovered', true);
-        //}
-        //});
-        //console.log(view.model);
-        //console.log(view.model.getNearestCoords());
       }
     },
     onMouseOut: function (e) {
@@ -249,22 +265,11 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       var view = this.getViewFromEvent(e);
       if (view) {
         view.model.set('isHovered', false);
-
-        //_.each(view.model.get('neighbors'), function (neighbor) {
-        //neighbor.set('isHovered', false);
-        //});
-        //_.each(view.model.getNearestCoords(), function (coords) {
-        //var cell = _self.model.getCellWithCoord(coords[0], coords[1], coords[2]);
-        //if (cell) {
-        //cell.set('isHovered', false);
-        //}
-        //});
       }
     },
     onMouseDown: function (e) {
       var view = this.getViewFromEvent(e);
       if (view) {
-        //view.model.set('enabled', !view.model.get('enabled'));
         var type;
         if ( window.aspectType ) {
           type = window.aspectType;
@@ -278,7 +283,8 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
   });
 
   var field = new Field({
-    cells: new Cells()
+    cells: new Cells(),
+    fieldRadius: FIELD_SIZE
   });
 
   var fieldView = new FieldView({
@@ -292,7 +298,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
       //this.$el.html(this.model.get('name'));
     },
     events: {
-      "click": "chooseAspect"
+      'click': 'chooseAspect'
     },
     chooseAspect: function () {
       window.aspectType = this.model.get('type');
