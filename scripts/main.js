@@ -14,7 +14,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     height: 480
   });
 
-  var FIELD_SIZE = 3;
+  var FIELD_SIZE = 4;
 
   var basePoint = new fabric.Point(200, 200);
   var hexProps = {
@@ -318,6 +318,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     collection: aspects
   });
 
+  var componentsMap = {};
   var aspectRelationMap = {};
 
   aspects.each(function (aspect) {
@@ -326,6 +327,11 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     if (!aspectRelationMap[type]) {
       aspectRelationMap[type] = [];
     }
+
+    if (!componentsMap[type]) {
+      componentsMap[type] = [];
+    }
+
     _.each(aspect.get('components'), function (component) {
       if (!aspectRelationMap[component]) {
         aspectRelationMap[component] = [];
@@ -333,6 +339,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
 
       if (!_.contains(aspectRelationMap[type], component)) {
         aspectRelationMap[type].push(component);
+        componentsMap[type].push(component);
       }
       if (!_.contains(aspectRelationMap[component], type)) {
         aspectRelationMap[component].push(type);
@@ -347,6 +354,58 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
   aspects.each(function (aspect) {
     weights[aspect.get('type')] = aspect.get('complexivity');
   });
+
+  //var pathes = [];
+  //var findPathes = function (type, currentPath) {
+    //_.each(aspectRelationMap[type], function (component) {
+      //if (!_.contains(currentPath, component)) {
+        //var newPath = _.union(currentPath, [component]);
+        //pathes.push(newPath);
+        //findPathes(component, newPath)
+      //}
+    //});
+  //};
+
+  //aspects.each(function (aspect) {
+    //findPathes(aspect.get('type'), []);
+  //});
+
+  aspects.each(function (aspectA) {
+    var row = aspects.map(function (aspectB) {
+      return _.contains(aspectRelationMap[aspectA.get('type')], aspectB.get('type')) ? 1: 0;
+    });
+    console.log(row.join(', '));
+  });
+
+  console.log(pathes);
+
+  //var parts = {};
+  //var getWeightedComponentes = function (type) {
+    //if (!parts[type]) {
+      //var part = {};
+      //_.each(componentsMap[type], function (type) {
+        //part[type] = [];
+        //_.each(getWeightedComponentes(type), function (dep, compType) {
+          //part[compType] = _.union([type], dep);
+        //});
+      //});
+      //parts[type] = part;
+    //}
+    //return parts[type];
+  //};
+
+  //aspects.each(function (aspect) {
+    //getWeightedComponentes(aspect.get('type'));
+  //});
+
+  //console.log('parts', parts);
+
+  var getDist = function (aspectA, aspectB) {
+    if (parts[aspectA][aspectB]) {
+
+    }
+
+  }
 
   console.log('WEIGHTS:', weights);
 
@@ -401,15 +460,15 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
         var nextPathMap = {};
 
         _.each(currentPathMap, function (path, type1) {
-            _.each(aspectRelationMap[type1], function (type) {
-              var nextPath = path + weights[type];
-              if (nextPath <= MAX_PATH_SIZE) {
-                //console.log('try ', type1, 'and ', type, weights[type]);
-                if (!nextPathMap[type] || nextPathMap[type] > nextPath) {
-                  nextPathMap[type] = nextPath;
-                }
+          _.each(aspectRelationMap[type1], function (type) {
+            var nextPath = path + weights[type];
+            if (nextPath <= MAX_PATH_SIZE) {
+              //console.log('try ', type1, 'and ', type, weights[type]);
+              if (!nextPathMap[type] || nextPathMap[type] > nextPath) {
+                nextPathMap[type] = nextPath;
               }
-            });
+            }
+          });
         });
 
         //console.log(cid, 'next path map', nextPathMap);
@@ -453,41 +512,74 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
 
     var maps = _.map(filledCells, generatePathMap);
 
-    var m1 = maps[0];
-    var m2 = maps[1];
-
-    var sum = {};
-
-    _.each(maps, function (submap) {
-      _.each(submap, function (submap2, cid) {
-        var sumSubMap = sum[cid] || {};
-        _.each(submap2, function (path, type) {
-          sumSubMap[type] = path + (sumSubMap[type] || 0);
-        });
-        sum[cid] = sumSubMap;
-      });
-    });
+    //var m1 = maps[0];
+    //var m2 = maps[1];
 
     var solve = {};
     _.each(filledCells, function (cell) {
       solve[cell.cid] = cell.get('aspect');
     });
 
-    var flatMapUniq = function (arr) {
-      return _.uniq(_.union.apply(_, arr));
-    };
+    //_.each(maps, function (submap) {
 
-    var findToSolve = function() {
-      return flatMapUniq(_.map(solve, function (aspect, cid) {
-        var neighbors = neighborsMap[cid];
-        return _.filter(neighbors, function (cid) {
-          return !solve[cid];
-        });
-      }));
-    };
+      //_.each(solve, function (type, cid) {
+        //if (submap[cid][type] > 0) {
+          //submap[cid][type] -= weights[type];
+          //}
+  //});
+  //});
 
-    var toSolve = findToSolve();
-    while(toSolve.length >0) {
+  var sum = {};
+
+  _.each(maps, function (submap) {
+    _.each(submap, function (submap2, cid) {
+      var sumSubMap = sum[cid] || {};
+      _.each(submap2, function (path, type) {
+        //if (path > 0) {
+          //path -= weights[type];
+          //}
+          //if (solve[cid] === type) {
+            //path = 0;
+            //submap2[type] = path;
+            //}
+            sumSubMap[type] = path + (sumSubMap[type] || 0) - weights[type];
+      });
+      sum[cid] = sumSubMap;
+    });
+  });
+
+  _.each(sum, function (submap, cid) {
+    _.each(submap, function (path, type) {
+      if (!solve[cid] || !solve[cid][type]) {
+        submap[type] = path + weights[type];
+      }
+    });
+  });
+  //var commonPathes = {}
+
+  //_.each(sum, function (submap, cid) {
+    //_.each(submap, function (path, type) {
+      //commonPathes[path] = (commonPathes[path] || 0) + 1;
+  //});
+  //});
+
+  //console.log(commonPathes);
+
+  var flatMapUniq = function (arr) {
+    return _.uniq(_.union.apply(_, arr));
+  };
+
+  var findToSolve = function() {
+    return flatMapUniq(_.map(solve, function (aspect, cid) {
+      var neighbors = neighborsMap[cid];
+      return _.filter(neighbors, function (cid) {
+        return !solve[cid];
+      });
+    }));
+  };
+
+  var toSolve = findToSolve();
+  while(toSolve.length >0) {
 
     _.each(toSolve, function (cid) {
       var neighbors = neighborsMap[cid];
@@ -511,44 +603,47 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
     });
 
     toSolve = findToSolve();
-    }
+  }
 
-    //_.each(m1, function (submap, cid) {
-      //var submap2 = m2[cid];
-      //var submapSum = {};
-      //_.each(submap, function (path, type) {
-        //submapSum[type] = path + submap2[type];
-      //});
-      //summ[cid] = submapSum;
-    //});
+  //_.each(m1, function (submap, cid) {
+    //var submap2 = m2[cid];
+    //var submapSum = {};
+    //_.each(submap, function (path, type) {
+      //submapSum[type] = path + submap2[type];
+  //});
+  //summ[cid] = submapSum;
+  //});
 
-    //console.log(m2.c61.ordo);
-    //console.log(m1.c103.sensus);
-    var dist = sum[filledCells[0].cid][filledCells[0].get('aspect')] - weights[filledCells[0].get('aspect')];
-    var dist2 = sum[filledCells[1].cid][filledCells[1].get('aspect')]- weights[filledCells[1].get('aspect')];
-    console.log('DISTS', dist, dist2);
+  //console.log(m2.c61.ordo);
+  //console.log(m1.c103.sensus);
+  //var dist = sum[filledCells[0].cid][filledCells[0].get('aspect')];
+  //var dist2 = sum[filledCells[1].cid][filledCells[1].get('aspect')];
+  //console.log('DISTS', dist, dist2);
 
-    //summ = m1;
-    //summ = m2;
+  //sum = m1;
+  //sum = m2;
 
-    var globalMin = MAX_PATH_SIZE;
-    _.each(sum, function (submap, cid) {
-      _.each(submap, function (path, type) {
-        if (path < globalMin) {
-          globalMin = path;
-        }
-      });
+  var globalMin = MAX_PATH_SIZE;
+  _.each(sum, function (submap, cid) {
+    _.each(submap, function (path, type) {
+      if (path < globalMin) {
+        globalMin = path;
+      }
     });
-    console.log('MIN: ',globalMin);
-    _.each(sum, function (submap, cid) {
-      var min = 'aer';
-      _.each(submap, function (path, type) {
+  });
+  console.log('MIN: ',globalMin);
+  _.each(sum, function (submap, cid) {
+    var min = 'aer';
+    _.each(submap, function (path, type) {
+      //if (path == dist) {
+        //min = type;
+        //}
         if (path < submap[min]) {
           min = type;
         }
-      });
-      //if (globalMin === submap[min]) {
-      //if (dist === submap[min] - weights[min]) {
+    });
+    //if (globalMin === submap[min]) {
+      //if (dist === submap[min]) {
         //console.log(cid, submap);
         cells.get(cid).set('aspect', min);
         var info = _.map(submap, function (path, type) {
@@ -558,16 +653,20 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects'], function ($, f
         if ( cid === 'c50' ) {
           console.log(submap);
         }
-      //}
-    });
-
-  _.each(solve, function (type, cid) {
-    cells.get(cid).set('aspect', type);
+        //}
   });
 
+  //_.each(solve, function (type, cid) {
+    //cells.get(cid).set('aspect', type);
+  //});
+
   });
 
-  //cells.get('c103').set('aspect', 'sensus');
-  //cells.get('c61').set('aspect', 'ordo');
+  //cells.get('c66').set('aspect', 'aer');
+  //cells.get('c80').set('aspect', 'lux');
+
+  //cells.get('c57').set('aspect', 'aer');
+  //cells.get('c58').set('aspect', 'ignis');
+  //cells.get('c59').set('aspect', 'aqua');
 
 });
