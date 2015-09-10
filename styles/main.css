@@ -6,21 +6,14 @@
   right:0;
 }
 
-.field-container {
-  position: relative;
+.field-icon {
+  position: absolute;
+  top: 4px;
+  left: 5px;
 }
 
-.cell .tooltip {
-  display: none;
-  position:absolute;
-  left: 40px;
-  top: 40px;
-  height: 900px;
-  width: 200px;
-  background: #000;
-  color: #fff;
-  z-index: 100;
-  padding: 10px;
+.field-container {
+  position: relative;
 }
 
 .cell.hovered .tooltip {

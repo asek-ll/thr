@@ -9,30 +9,32 @@
   <body>
     <div class="container">
       <h1>T R H</h1>
-      <form class="config-form form-horizontal">
+      <div class="config-form form-horizontal">
         <div class="form-group">
           <label for="exampleInputEmail1" class="col-sm-2 control-label">Field radius</label>
           <div class="col-sm-1">
-            <select class="form-control">
+            <select class="form-control field-radius-field">
+              <option>1</option>
+              <option>2</option>
               <option>3</option>
               <option>4</option>
             </select>
           </div>
         </div>
-      </form>
+        <button id="calc-btn" class="btn btn-default">Calculate</button>
+        <button id="clear-btn" class="btn btn-default">Clear</button>
+      </div>
       <div class="row">
         <div class="col-xs-6">
           <div class="field-container">
             <div class="field-icons"></div>
             <canvas id="field" ></canvas>
-            <div class="field-tooltips"></div>
           </div>
         </div>
         <div class="col-xs-6">
           <div class="aspects"></div>
         </div>
       </div>
-      <button id="calc-btn">calc</button>
     </div>
   </body>
 </html>
