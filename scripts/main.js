@@ -291,14 +291,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
           view.model.set('enabled', !view.model.get('enabled'))
         }
         storeCellsToUrl();
-        //var type;
-        //if (window.aspectType) {
-        //type = window.aspectType;
-        //} else {
-        //var aspectModel = aspects.models[_.random(0, aspects.length - 1)];
-        //type = aspectModel.get('type');
-        //}
-        //view.model.set('aspect', type);
       }
     }
   });
@@ -408,15 +400,11 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
     });
   });
 
-  console.log(aspectRelationMap);
-
   var weights = {};
 
   aspects.each(function (aspect) {
     weights[aspect.get('type')] = aspect.get('complexivity');
   });
-
-  console.log('WEIGHTS:', weights);
 
   $('#calc-btn').click(function () {
 
@@ -436,8 +424,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
         return neighbor.cid;
       });
     });
-
-    //console.log(neighborsMap);
 
     var MAX_PATH_SIZE = 99999;
 
@@ -468,7 +454,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
       var changedCells = [cell.cid];
 
       while (changedCells.length > 0) {
-        //console.log('changed', changedCells);
         var processingCells = changedCells;
         changedCells = [];
 
@@ -480,15 +465,12 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
             _.each(aspectRelationMap[type1], function (type) {
               var nextPath = path + weights[type];
               if (nextPath <= MAX_PATH_SIZE) {
-                //console.log('try ', type1, 'and ', type, weights[type]);
                 if (!nextPathMap[type] || nextPathMap[type] > nextPath) {
                   nextPathMap[type] = nextPath;
                 }
               }
             });
           });
-
-          //console.log(cid, 'next path map', nextPathMap);
 
           var neighbors = neighborsMap[cid];
 
@@ -513,7 +495,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
 
               if (nextPathVariant < newPathMap[type]) {
                 newPathMap[type] = nextPathVariant;
-                //console.log(cid, 'update', type, 'to', nextPathVariant);
                 isChanged = true;
               }
             });
@@ -581,7 +562,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
         return pair.min;
       }).value();
 
-      console.log(minsP);
       var minType = _.chain(sum[minsP.cid]).map(function (path, type) {
         return {
           path: path,
@@ -593,7 +573,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
 
       var cell = field.get('cells').get(minsP.cid);
       cell.set('aspect', minType.type);
-      console.log(minType);
 
       filledCells.push(cell);
 
@@ -606,7 +585,10 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
       });
 
       var groupsNear = _.map(cells, function (cell) {
-        return neighborsMap[cell.cid];
+        return _.filter(neighborsMap[cell.cid], function (cid) {
+          var neib = field.get('cells').get(cid);
+          return _.contains(aspectRelationMap[cell.get('aspect')], neib.get('aspect'));
+        });
       });
 
       var wasChange = true;
