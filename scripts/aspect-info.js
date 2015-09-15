@@ -270,7 +270,14 @@ define(function () {
         'trap': ['motion', 'entropy'],
         'taint': ['magic', 'entropy'],
         'crystal': ['earth', 'order'],
-        'flight': ['air', 'motion']
+        'flight': ['air', 'motion'],
+        "wrath": ["weapon", "fire"],
+        "nether": ["fire", "magic"],
+        "gluttony": ["hunger", "void"],
+        "envy": ["senses", "hunger"],
+        "sloth": ["trap", "soul"],
+        "pride": ["flight", "void"],
+        "lust": ["flesh", "hunger"]
       }
     }
   };

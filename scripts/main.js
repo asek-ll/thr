@@ -33,17 +33,18 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
 
   var svgPath = 'M 0 0 L ' + hexProps.osn + ' 0 L ' + (hexProps.osn + exWidth) + ' ' + halfHeight + ' L ' + hexProps.osn + ' ' + hexProps.height + ' L 0 ' + hexProps.height + ' L -' + exWidth + ' ' + halfHeight + ' z';
 
-  var defaultBackgroundColor = '#ffffa0';
+  var defaultBackgroundColor = '#ffffaa';
+  var defaultStroke = '#666600';
 
-  var HY = new fabric.Point(0, hexProps.height + 0);
-  var HX = new fabric.Point(-32, -(hexProps.height + 0) / 2);
-  var HZ = new fabric.Point(32, -(hexProps.height + 0) / 2);
+  var HY = new fabric.Point(0, hexProps.height + 8);
+  var HX = new fabric.Point(-40, -(hexProps.height + 8) / 2);
+  var HZ = new fabric.Point(40, -(hexProps.height + 8) / 2);
 
   var createHex = function (options) {
     var path = new fabric.Path(svgPath);
     path.set(_.extend({
       fill: defaultBackgroundColor,
-      stroke: '#aaaa00',
+      stroke: defaultStroke,
       opacity: 0.3
     }, options));
     path.selectable = false;
@@ -120,12 +121,13 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
           this.$el.addClass('hovered');
         } else {
           this.path.setFill(defaultBackgroundColor);
+          this.path.setStroke(defaultStroke);
           this.$el.popover('hide');
           this.$el.removeClass('hovered');
         }
       } else {
         this.path.setFill('#ffffff');
-        //this.path.setStroke('#aaaa00')
+        this.path.setStroke('#ffffff');
         this.$el.popover('hide');
       }
 
