@@ -668,6 +668,7 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
     var iterateFunc = function () {
       filledCells = findNext(filledCells);
       if (!isConnected(filledCells)) {
+        field.set('calculated', true);
         timerId = setTimeout(iterateFunc, 10);
       } else {
         complete();
@@ -676,7 +677,6 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
 
     if (!isConnected(filledCells)) {
       iterateFunc();
-      field.set('calculated', true);
     }
 
   });
