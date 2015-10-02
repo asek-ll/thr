@@ -380,6 +380,45 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
     }
   }));
 
+  var Weights = Backbone.Model.extend({
+    initialize: function (aspects) {
+      this.set('weights',
+        aspects.map(function (aspect) {
+          return {aspect: aspect, value: aspect.get('complexivity')};
+        })
+      );
+    }
+  });
+
+  var WeightsView = Backbone.View.extend({
+    initialize: function () {
+      var _self = this;
+      var weights = this.model.get('weights');
+      _.each(weights, function (weight) {
+        var type = weight.aspect.get('type');
+        var $item = $('<tr><td><div class="aspect-icon aspect-icon-' + type  + ' col-sm-2" /></td><td><div class="col-sm-3"><input type="number" class="form-control" /></div></td></tr>');
+        var $textInput = $item.find('input');
+        $textInput.val(weight.value);
+        $textInput.on('change', function () {
+          _self.onChangeWeight(weight.aspect, parseInt($(this).val(), 10));
+        });
+        _self.$el.append($item);
+      });
+    },
+    onChangeWeight: function (aspect, value) {
+      var weight = _.find(this.model.get('weights'), function (weight) {
+        return weight.aspect == aspect;
+      });
+      weight.value = value;
+    }
+  });
+
+  var weightsCollections = new Weights(aspects);
+  var weightsView = new WeightsView({
+    el: '.weights',
+    model: weightsCollections
+  });
+
   var aspectRelationMap = {};
 
   aspects.each(function (aspect) {
@@ -402,13 +441,14 @@ define(['jquery', 'fabric', 'underscore', 'backbone', 'aspects', 'bootstrap', 'j
     });
   });
 
-  var weights = {};
-
-  aspects.each(function (aspect) {
-    weights[aspect.get('type')] = aspect.get('complexivity');
-  });
-
   $('#calc-btn').click(function () {
+
+    var weights = {};
+
+    _.each(weightsCollections.get('weights'), function (weight) {
+      weights[weight.aspect.get('type')] = weight.value;
+    });
+    console.log(weights);
 
     var cells = field.get('cells').filter(function (cell) {
       return cell.get('enabled');
